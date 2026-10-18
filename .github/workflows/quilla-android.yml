@@ -9,6 +9,8 @@ on:
       - 'android/gradle.properties'
       - 'android/settings.gradle'
       - '.github/workflows/quilla-android.yml'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 jobs:
   android:
