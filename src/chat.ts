@@ -20,6 +20,11 @@ const messagesEl = document.querySelector<HTMLDivElement>("#messages");
 const inputEl = document.querySelector<HTMLTextAreaElement>("#msgInput");
 const sendBtn = document.querySelector<HTMLButtonElement>("#sendBtn");
 const conversationHistory: ChatMessage[] = [];
+function tokenFromApp(): string {
+ try { return (window as Window & {QuillaAndroid?: {deviceToken:()=>string}}).QuillaAndroid?.deviceToken() || ""; }
+ catch { return ""; }
+}
+
 
 function requireElements(): { messages: HTMLDivElement; input: HTMLTextAreaElement; button: HTMLButtonElement } {
   if (!messagesEl || !inputEl || !sendBtn) {
@@ -84,7 +89,7 @@ async function sendMessage(): Promise<void> {
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(tokenFromApp() ? {"X-QUILLA-DEVICE-TOKEN":tokenFromApp()} : {}) },
       body: JSON.stringify({ messages: conversationHistory.slice(-40) }),
     });
     const data = await response.json() as ChatResponse;

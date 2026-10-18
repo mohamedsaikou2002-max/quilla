@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { createReadStream, existsSync } from "node:fs";
-import { extname, join, normalize, resolve } from "node:path";
+import { extname, join, normalize, resolve, sep } from "node:path";
+import { timingSafeEqual } from "node:crypto";
 
 const projectRoot = resolve(process.cwd());
 const host = process.env.HOST || "127.0.0.1";
@@ -8,6 +9,20 @@ const port = Number(process.env.PORT || 5000);
 const lmStudioBaseUrl = (process.env.LM_STUDIO_BASE_URL || "http://127.0.0.1:1234/v1").replace(/\/+$/, "");
 const lmStudioModel = process.env.LM_STUDIO_MODEL || "qwen3-vl-8b-glm-4.7-flash-heretic-uncensored-thinking";
 const lmStudioApiKey = process.env.LM_STUDIO_API_KEY || "";
+const pairToken = process.env.QUILLA_MOBILE_TOKEN || "";
+const paired = process.env.QUILLA_PAIRED_MOBILE === "1" && pairToken.length >= 24;
+function authorized(request: IncomingMessage): boolean {
+ const addr = (request.socket.remoteAddress || "").replace(/^::ffff:/, "");
+ if (addr === "127.0.0.1" || addr === "::1") return true;
+ if (!paired) return false;
+ const o = addr.split(".").map(Number);
+ if (o.length !== 4 || o.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return false;
+ const [a,b] = o;
+ if (!(a === 10 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127))) return false;
+ const supplied = request.headers["x-quilla-device-token"];
+ return typeof supplied === "string" && supplied.length === pairToken.length && timingSafeEqual(Buffer.from(supplied),Buffer.from(pairToken));
+}
+
 
 function sendJson(response: ServerResponse, status: number, value: unknown): void {
   response.writeHead(status, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
@@ -30,6 +45,8 @@ async function readJson(request: IncomingMessage): Promise<unknown> {
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 async function chat(request: IncomingMessage, response: ServerResponse): Promise<void> {
+ if (!authorized(request)) { sendJson(response, 401, {error: "Mobile pairing token missing or incorrect."}); return; }
+
   let data: unknown;
   try { data = await readJson(request); }
   catch (error) {
@@ -116,7 +133,7 @@ function serveFile(pathname: string, response: ServerResponse): void {
     return;
   }
   const filePath = resolve(join(projectRoot, relative));
-  if (!filePath.startsWith(projectRoot + "\\") && filePath !== projectRoot || !existsSync(filePath)) {
+  if (!filePath.startsWith(projectRoot + sep) && filePath !== projectRoot || !existsSync(filePath)) {
     sendJson(response, 404, { error: "Not found." });
     return;
   }
