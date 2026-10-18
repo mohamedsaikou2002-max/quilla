@@ -7,7 +7,7 @@ This is the chat function of the currently available GitHub QUILLA repository, n
 
 ## Laptop setup (Windows / PowerShell)
 
-1. Install Node.js 20.6+ and LM Studio. In LM Studio, install and load an actual abliterated GGUF model you want to run, or keep your currently configured model if installed. Enable the LM Studio **Developer > Start Server** option on **localhost only**, typically port 1234. LM Studio `/v1/models` provides the exact ID of your loaded model.
+1. Install Node.js 20.6+ and LM Studio. In LM Studio, install and load an abliterated GGUF model, or keep your currently configured model if installed. For an 8B starter option, see Huihui-Qwen3-8B-abliterated-v2 (Q4_K_M, approximately 5.1 GB on disk): https://huggingface.co/mradermacher/Huihui-Qwen3-8B-abliterated-v2-GGUF . The 5.1 GB is model-file size, not total memory required; CPU-only inference may be slow. Enable the LM Studio **Developer > Start Server** option on **localhost only**, typically port 1234. LM Studio `/v1/models` provides the exact ID of your loaded model.
 2. Clone or open your *existing* QUILLA repository:
 
 ```powershell
@@ -51,7 +51,7 @@ A workflow is provided in `.github/workflows/android-debug-apk.yml` for builds o
 
 ## Model notes
 
-The current GitHub backend has `LM_STUDIO_MODEL=qwen3-vl-8b-glm-4.7-flash-heretic-uncensored-thinking` as a default model *identifier*. That does not verify model availability. Replace it with the exact local ID from `/v1/models`. A 7–8B abliterated GGUF quantized at Q4 is a reasonable starting point if your laptop has sufficient RAM. Abliteration reduces model refusals; it does not guarantee factuality, reasoning quality, or security. Do not grant untrusted models direct shell, filesystem, or browser privileges.
+The current GitHub backend has `LM_STUDIO_MODEL=qwen3-vl-8b-glm-4.7-flash-heretic-uncensored-thinking` as a default model *identifier*. That does not verify model availability. Replace it with the exact local ID from `/v1/models`. A 7–8B abliterated GGUF quantized at Q4 is a reasonable starting point if your laptop has sufficient RAM (16 GB system memory is preferable, depending on GPU offload and context length). Abliteration reduces model refusals; it does not guarantee factuality, reasoning quality, or security. Do not grant untrusted models direct shell, filesystem, or browser privileges.
 
 ## Verification
 
