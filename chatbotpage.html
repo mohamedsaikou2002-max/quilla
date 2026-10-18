@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0c10">
+  <title>Finagler — Chat</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Chat panel -->
+  <main class="panel">
+
+    <!-- Header -->
+    <header class="panel-header">
+      <div class="header-dot"></div>
+      <span class="header-label">FINAGLER · LOCAL MODEL</span>
+      <div class="header-status" id="statusDot" title="Ready"></div>
+    </header>
+
+    <!-- Messages -->
+    <div class="messages" id="messages">
+      <div class="msg agent">
+        <div class="bubble">Hi, I’m Finagler. Ask a question and I’ll answer using your local LM Studio model.</div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <textarea
+        id="msgInput"
+        rows="1"
+        placeholder="Ask Finagler anything…"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" type="button" aria-label="Send message">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22,2 15,22 11,13 2,9"/>
+        </svg>
+      </button>
+    </div>
+
+  </main>
+
+  <script src="/static/js/chat.js"></script>
+</body>
+</html>
