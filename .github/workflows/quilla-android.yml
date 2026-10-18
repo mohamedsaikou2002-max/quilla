@@ -1,0 +1,41 @@
+name: QUILLA Android debug APK
+on:
+  push:
+    branches: [quilla-android-local-llm]
+    paths:
+      - 'android/quilla-source.b64'
+      - '.github/workflows/quilla-android.yml'
+  workflow_dispatch:
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract QUILLA Android source
+        run: |
+          base64 --decode android/quilla-source.b64 > /tmp/quilla-android.zip
+          unzip -o -q /tmp/quilla-android.zip -d .
+          test -f android/app/src/main/AndroidManifest.xml
+          test -f android/app/src/main/res/drawable-nodpi/quilla_icon.png
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Assemble APK
+        working-directory: android
+        run: gradle --no-daemon assembleDebug
+      - name: Publish installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: QUILLA-Android-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
