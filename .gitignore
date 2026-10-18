@@ -32,3 +32,6 @@ __pycache__/
 /tests/
 /requirements*.txt
 /test.c
+
+# Private Android pairing token generated on laptop
+.quilla_mobile_pairing_token
