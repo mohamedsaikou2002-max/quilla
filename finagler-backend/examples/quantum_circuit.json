@@ -1,0 +1,1 @@
+{"qubits":2,"operations":[{"gate":"h","targets":[0]},{"gate":"cx","targets":[0,1]},{"gate":"t","targets":[1]}]}
