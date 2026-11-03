@@ -1,0 +1,26 @@
+name: Finagler quantum profile tests
+on:
+  push:
+    paths:
+      - 'finagler-backend/app/providers/quantum_profiles.py'
+      - 'finagler-backend/app/routes/quantum.py'
+      - 'finagler-backend/tests/**'
+      - '.github/workflows/quantum-profiles.yml'
+  pull_request:
+    paths:
+      - 'finagler-backend/app/providers/quantum_profiles.py'
+      - 'finagler-backend/app/routes/quantum.py'
+      - 'finagler-backend/tests/**'
+      - '.github/workflows/quantum-profiles.yml'
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: finagler-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest discover -s tests -v
