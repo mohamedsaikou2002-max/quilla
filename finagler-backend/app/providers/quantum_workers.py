@@ -55,6 +55,8 @@ def run_pyliqtr(spec: Mapping[str, Any]) -> dict[str, Any]:
                     "cx": lambda: cirq.CNOT(q[t[0]], q[t[1]])}[g]())
     # Explicit named arguments follow pyLIQTR's documented estimate_resources API.
     resources = estimate_resources(cirq.Circuit(ops), profile=True)
+    if not isinstance(resources, dict) or any(key not in resources for key in ("T", "Clifford")):
+        raise RuntimeError("pyLIQTR returned incomplete resource estimates")
     return {
         "provider": "pyliqtr", "upstream_version": version("pyLIQTR"),
         "status": "COMPUTED_BY_INSTALLED_LIBRARY_UNVALIDATED",
