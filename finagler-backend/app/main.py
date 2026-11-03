@@ -7,6 +7,7 @@ from app.config import get_settings
 from app.corpus import ingest, retriever
 from app.corpus.store import collection
 from app.providers import local_llm
+from app.routes.quantum import router as quantum_router
 
 SYSTEM_PROMPT = (
     "You are Finagler, a helpful problem-solving assistant. "
@@ -15,6 +16,7 @@ SYSTEM_PROMPT = (
 )
 
 app = FastAPI(title="Finagler Backend")
+app.include_router(quantum_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_settings().allowed_origins,
